@@ -6,10 +6,16 @@ LOG=test.log
 
 rm -f $LOG
 
-if [ "$1" = obj ]; then
+if test -z "$1"; then
+  kk='3 4'
+else
+  kk="$(seq 3 $1)"
+fi
+
+if test "$2" = obj; then
   ext=.exe
 else
-  ext=
+  ext=.sh
 fi
 
 # Some hints on selecting a filling percentage:
@@ -17,8 +23,7 @@ fi
 # * less than 20% (=17/81) is generally believed to be extra-difficult for human solver
 fill_ratio=20
 
-#for k in 3 4; do
-for k in 3; do
+for k in $kk; do
   sz=$(($k * $k))
   nelts=$(($sz*$sz))
   ninits=$(($fill_ratio * $nelts / 100))
@@ -27,3 +32,4 @@ for k in 3; do
   (bin/GenRand$ext $sz $ninits 0 | time -f 'Time: %e s' bin/Solve$ext) 2>&1 | tee -a $LOG
   echo
 done
+
