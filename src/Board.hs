@@ -219,11 +219,11 @@ to_cnf b@(size, m) =
 get_single_yes :: Board -> [CNF.Literal] -> Int
 get_single_yes b cnf
 --    | trace ("get_assign:\n  cnf = " ++ (show cnf) ++ "\n  pos = " ++ (show pos) ++ "\n  negs = " ++ (show negs) ++ "\n") False = undefined
-    | length yess /= 1 = error "invalid input from solver: number of positive variables for cell /= 1"
+    | length yes /= 1 = error "invalid input from solver: number of positive variables for cell /= 1"
     | otherwise = k
   where
-    (nos, yess) = Data.List.partition CNF.is_negation cnf
-    CNF.Yes var = head yess
+    (_, yes) = Data.List.partition CNF.is_negation cnf
+    CNF.Yes var = head yes
     (_, _, k) = var2ijk b var
 
 conflict :: Board -> Board -> Bool
