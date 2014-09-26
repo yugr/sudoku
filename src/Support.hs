@@ -34,10 +34,8 @@ deintersperse_multi x xs =
 
 -- Helper for main functions: if cmdline args contain filename - read it, otherwise read stdin
 readFileOrStdin :: [String] -> IO String
-readFileOrStdin args =
-  case args of
-    arg:_ -> readFile arg
-    [] -> getContents
+readFileOrStdin [] = getContents
+readFileOrStdin (arg:_) = readFile arg
 
 -- Print user-friendly error and exit
 report_error :: String -> IO a
