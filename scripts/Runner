@@ -1,0 +1,8 @@
+#!/bin/sh
+
+GHCFLAGS='+RTS -M64m -RTS'
+#GHCFLAGS="$GHCFLAGS -Wall"
+
+SRC=src
+
+runghc $GHCFLAGS -i$SRC "$SRC/$(basename $0).hs" "$@"

@@ -1,0 +1,11 @@
+TODO:
+* profile and improve performance
+* fix FIXMEs
+* find all solutions
+* refactor
+
+Learning:
+* using ghc tool
+* what's the proper way to do error handling? what about nested ifs and cases ?
+* same for assertions? how about (ab)using guards?
+
