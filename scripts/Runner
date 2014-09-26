@@ -4,5 +4,6 @@ GHCFLAGS='+RTS -M64m -RTS'
 #GHCFLAGS="$GHCFLAGS -Wall"
 
 SRC=src
+HS=$(echo $(basename $0) | sed -e 's/\(\.[^.\/]*\)\?$/.hs/')
 
-runghc $GHCFLAGS -i$SRC "$SRC/$(basename $0).hs" "$@"
+runghc $GHCFLAGS -i$SRC "$SRC/$HS" "$@"
