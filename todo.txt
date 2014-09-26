@@ -4,6 +4,7 @@ TODO:
 * find all solutions
 * refactor
 * Haddocks
+* better deps tracking
 
 Learning:
 * using ghc tool
