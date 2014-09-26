@@ -3,6 +3,7 @@ TODO:
 * fix FIXMEs
 * find all solutions
 * refactor
+* Haddocks
 
 Learning:
 * using ghc tool
