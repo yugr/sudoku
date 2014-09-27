@@ -1,7 +1,9 @@
 MODDIR = src
 OBJDIR = bin
 
-# Too much clutter ...
+GHCFLAGS = -O -rtsopts
+
+# Too much clutter..
 #GHCFLAGS = -Wall -fno-warn-name-shadowing
 
 # Gimme some dirt...
@@ -11,8 +13,8 @@ LDFLAGS = -package random -package directory -package process
 
 OBJS = $(OBJDIR)/Support.o $(OBJDIR)/Board.o $(OBJDIR)/CNF.o
 
-ifneq (,$(OPT))
-  GHCFLAGS += -O
+ifneq (,$(PROF))
+  GHCFLAGS += -prof -fprof-auto
 endif
 
 all: interp obj
@@ -38,6 +40,10 @@ lintify:
 	hlint src -i 'Use camelCase'  # Not using CamelCase and proud of it!
 	checkbashisms scripts/* *.sh
 
+prof: obj
+	GHCRTS='-p -h' scripts/test.sh 5 obj
+	dos2unix *.prof *.hp
+
 test t: interp
 	scripts/test.sh 4
 
@@ -49,8 +55,7 @@ depend:
 	sed -ie '/DO NOT DELETE: Beginning of/,/DO NOT DELETE: End of/s!src/\([^ ]*\.hi\)!bin/\1!' Makefile
 
 clean:
-	rm -rf bin/* test.log
-	rm -f board_out*.cnf  # Ugly hack (see Solve.hs for details)
+	rm -f bin/* test.log *.prof *.hp *.aux
 
 .PHONY: clean test t lintify all obj interp
 
