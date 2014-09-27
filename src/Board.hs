@@ -165,7 +165,11 @@ pretty_read s =
      (3) not Si,j(k) or not Si,j'(k)
      (4) not Si,j(k) or not Si',j'(k)
      (5) Si,j(1) or Si,j(2) or ...
-   Each rule scheme gives N^4 equations.
+   Each rule scheme gives N^4 equations. Problem sizes for small boards:
+    * 26244 for 9x9 boards
+    * 262144 for 16x16 boards
+    * 1562500 for 25x25 boards
+    * 6718464 for 36*36 boards
 -}
 
 nvars (size, _) = size * size * size
