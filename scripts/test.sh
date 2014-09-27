@@ -19,9 +19,7 @@ else
 fi
 
 # Avoid overflowing memory due to perf bugs
-if test -z "$GHCRTS"; then
-  export GHCRTS=-M128M
-fi
+export GHCRTS="$GHCRTS -M512M"
 
 # Some hints on selecting a filling percentage:
 # * anything higher than 30% will cause current generator to frequently produce unsolvable boards

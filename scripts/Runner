@@ -1,6 +1,6 @@
 #!/bin/sh
 
-GHCRTS=-M128M
+export GHCRTS="$GHCRTS -M512M"
 #GHCFLAGS="$GHCFLAGS -Wall"
 
 MODDIR=src
