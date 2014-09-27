@@ -18,6 +18,11 @@ else
   ext=.sh
 fi
 
+# Avoid overflowing memory due to perf bugs
+if test -z "$GHCRTS"; then
+  export GHCRTS=-M128M
+fi
+
 # Some hints on selecting a filling percentage:
 # * anything higher than 30% will cause current generator to frequently produce unsolvable boards
 # * less than 20% (=17/81) is generally believed to be extra-difficult for human solver
@@ -32,4 +37,6 @@ for k in $kk; do
   (bin/GenRand$ext $sz $ninits 0 | time -f 'Time: %e s' bin/Solve$ext) 2>&1 | tee -a $LOG
   echo
 done
+
+#rm -f board_*.cnf
 
