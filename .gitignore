@@ -1,0 +1,11 @@
+*.swp
+
+bin/*
+GHC-FLAGS
+
+*.cnf
+
+*.prof
+*.hp
+*.aux
+*.ps
