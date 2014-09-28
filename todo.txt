@@ -1,4 +1,6 @@
 TODO:
+* put temp files in separate folder
+* add time to temp filename
 * profile and improve performance
 * fix FIXMEs
 * find all solutions
