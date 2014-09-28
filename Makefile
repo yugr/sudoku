@@ -1,7 +1,7 @@
 MODDIR = src
 OBJDIR = bin
 
-GHCFLAGS = -O -rtsopts
+GHCFLAGS = -fforce-recomp -O2 -rtsopts
 
 # Too much clutter..
 #GHCFLAGS = -Wall -fno-warn-name-shadowing
@@ -13,41 +13,43 @@ LDFLAGS = -package random -package directory -package process
 
 OBJS = $(OBJDIR)/Support.o $(OBJDIR)/Board.o $(OBJDIR)/CNF.o
 
-ifneq (,$(PROF))
-  GHCFLAGS += -prof -fprof-auto
+ifneq (,$(PROFILE))
+  #GHCFLAGS += -prof -fprof-auto
+  GHCFLAGS += -prof -auto-all
 endif
 
 all: interp obj
 
-interp: $(OBJDIR)/GenRand.sh $(OBJDIR)/Solve.sh $(OBJDIR)/Encode.sh
+interp: $(OBJDIR)/GenRand.sh $(OBJDIR)/Solve.sh
 
 $(OBJDIR)/%.sh: scripts/Runner
 	cp scripts/Runner $@
 
-obj: $(OBJDIR)/GenRand.exe $(OBJDIR)/Solve.exe $(OBJDIR)/Encode.exe
+obj: $(OBJDIR)/GenRand.exe $(OBJDIR)/Solve.exe
 
-$(OBJDIR)/%.exe: $(OBJDIR)/%.o $(OBJS)
-	ghc $(GHCFLAGS) $(LDFLAGS) $^ -o $@
+$(OBJDIR)/%.exe: $(OBJDIR)/%.o $(OBJS) $(OBJDIR)/GHC-FLAGS
+	ghc $(GHCFLAGS) $(LDFLAGS) $< $(OBJS) -o $@
 
-$(OBJDIR)/%.o: $(MODDIR)/%.hs
+$(OBJDIR)/%.o: $(MODDIR)/%.hs $(OBJDIR)/GHC-FLAGS
 	ghc -c $(GHCFLAGS) -i$(OBJDIR) $< -o $@ -ohi $(@:o=hi)
 	mv $(<:hs=s) $(OBJDIR)
 
-$(OBJDIR)/%.hi: $(OBJDIR)/%.o
+$(OBJDIR)/%.hi: $(OBJDIR)/%.o $(OBJDIR)/GHC-FLAGS
 	# Was already moved during compilation of .o
 
 lintify:
 	hlint src -i 'Use camelCase'  # Not using CamelCase and proud of it!
 	checkbashisms scripts/* *.sh
 
-prof: obj
-	GHCRTS='-p -h' scripts/test.sh 5 obj
+profile:
+	GHCRTS='-s -p -h' scripts/test.sh 4 obj
 	dos2unix *.prof *.hp
+	hp2ps -c *.hp
 
-test t: interp
+test t:
 	scripts/test.sh 4
 
-test-obj t-obj: obj
+test-obj t-obj:
 	scripts/test.sh 4 obj
 
 depend:
@@ -55,9 +57,14 @@ depend:
 	sed -ie '/DO NOT DELETE: Beginning of/,/DO NOT DELETE: End of/s!src/\([^ ]*\.hi\)!bin/\1!' Makefile
 
 clean:
-	rm -f bin/* test.log *.prof *.hp *.aux
+	rm -f $(OBJDIR)/* test.log *.prof *.hp *.aux *.ps
 
-.PHONY: clean test t lintify all obj interp
+$(OBJDIR)/GHC-FLAGS: FORCE
+	if test x"$(GHCFLAGS)" != x"$$(cat $@)"; then \
+		echo "$(GHCFLAGS)" > $@; \
+	fi
+
+.PHONY: clean test t lintify all obj interp FORCE profile
 
 # DO NOT DELETE: Beginning of Haskell dependencies
 bin/Support.o : src/Support.hs
