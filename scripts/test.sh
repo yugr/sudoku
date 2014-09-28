@@ -19,7 +19,7 @@ else
 fi
 
 # Avoid overflowing memory due to perf bugs
-export GHCRTS="$GHCRTS -M512M"
+export GHCRTS="$GHCRTS -M1G"
 
 # Some hints on selecting a filling percentage:
 # * anything higher than 30% will cause current generator to frequently produce unsolvable boards
