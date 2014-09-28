@@ -14,7 +14,6 @@ LDFLAGS = -package random -package directory -package process
 OBJS = $(OBJDIR)/Support.o $(OBJDIR)/Board.o $(OBJDIR)/CNF.o
 
 ifneq (,$(PROFILE))
-  #GHCFLAGS += -prof -fprof-auto
   GHCFLAGS += -prof -auto-all
 endif
 
