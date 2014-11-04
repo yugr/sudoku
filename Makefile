@@ -1,7 +1,9 @@
 MODDIR = src
 OBJDIR = bin
 
-GHCFLAGS = -fforce-recomp -O2 -rtsopts
+PROFILE ?= 0
+
+GHCFLAGS = -fforce-recomp -O2 -rtsopts -funbox-strict-fields
 
 # Too much clutter..
 #GHCFLAGS = -Wall -fno-warn-name-shadowing
@@ -14,8 +16,8 @@ LDFLAGS = -package random -package directory -package process
 
 OBJS = $(OBJDIR)/Support.o $(OBJDIR)/Board.o $(OBJDIR)/CNF.o
 
-ifneq (,$(PROFILE))
-  GHCFLAGS += -prof -auto-all
+ifneq (0,$(PROFILE))
+  GHCFLAGS += -prof -auto-all -caf-all
 endif
 
 all: interp obj
@@ -61,10 +63,10 @@ lintify:
 	hlint src -i 'Use camelCase'  # Not using CamelCase and proud of it!
 	checkbashisms scripts/* *.sh
 
-ifneq (,$(PROFILE))
+ifneq (0,$(PROFILE))
 profile:
-	GHCRTS='-s -p -h' scripts/test.sh obj 4
-	dos2unix *.prof *.hp
+	GHCRTS='-s -h -i0.01' scripts/test.sh obj 4
+	dos2unix *.hp
 	hp2ps -c GenRand.hp
 	hp2ps -c Solve.hp
 endif
