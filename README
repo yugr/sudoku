@@ -4,7 +4,10 @@ This is a simple Sudoku solver that I've started to experiment with SAT/SMT solv
 
 = Plan =
 
-* run for inputs up to 100x100 (k=10)
+* run for inputs up to 100x100 (k=10); ideas:
+** use strict fields aggressively
+** generate all rules for each cell in one function
+** profile more
 * plot timing graphs (time vs. #constraints, #constraints vs. #vars)
 * experiment with SMT solvers
 
