@@ -1,15 +1,24 @@
-TODO:
-* put temp files in separate folder
-* add time to temp filename
-* profile and improve performance
-* fix FIXMEs
-* find all solutions
-* refactor
-* Haddocks
-* better deps tracking
+= Overview =
 
-Learning:
-* using ghc tool
+This is a simple Sudoku solver that I've started to experiment with SAT/SMT solvers.
+
+= Plan =
+
+* run for inputs up to 100x100 (k=10)
+* plot timing graphs (time vs. #constraints, #constraints vs. #vars)
+* experiment with SMT solvers
+
+= TODO =
+
+* find all solutions
+* put temp files in separate folder
+* FIXME
+* Haddocks
+* better deps tracking (?)
+
+= Read =
+
+* using GHC
 * what's the proper way to do error handling? what about nested ifs and cases ?
 * same for assertions? how about (ab)using guards?
 
