@@ -10,8 +10,8 @@ main :: IO ()
 main = do
   args <- System.Environment.getArgs 
   input <- Support.readFileOrStdin args
-  let b = Board.pretty_read input
-  sol <- Board.solve $!! b
+  let b = Control.DeepSeq.force $ Board.pretty_read input
+  sol <- Board.solve $ b
   putStr $ case sol of
     Nothing -> "solution does not exist"; Just b -> Board.pretty_print b
 

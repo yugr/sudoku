@@ -183,15 +183,15 @@ decode (size, _) idx = let idx1 = idx - 1 in (idx1 `mod` size * size, idx1 `mod`
 to_cnf :: Board -> CNF.CNF
 to_cnf b@(size, m) = rules
   where
-    rule1 i j k k' = [CNF.notlit (encode b i j k), CNF.notlit (encode b i j k')]
-    rule2 i j k i' = [CNF.notlit (encode b i j k), CNF.notlit (encode b i' j k)]
-    rule3 i j k j' = [CNF.notlit (encode b i j k), CNF.notlit (encode b i j' k)]
-    rule4 i j k i' j' = [CNF.notlit (encode b i j k), CNF.notlit (encode b i' j' k)]
-    rule5 i j = map (\k -> CNF.lit $ encode b i j k) [1 .. size]
+    rule1 i j k k' = CNF.Clz2 (CNF.notlit $ encode b i j k) (CNF.notlit $ encode b i j k')
+    rule2 i j k i' = CNF.Clz2 (CNF.notlit $!! encode b i j k) (CNF.notlit $!! encode b i' j k)
+    rule3 i j k j' = CNF.Clz2 (CNF.notlit $!! encode b i j k) (CNF.notlit $!! encode b i j' k)
+    rule4 i j k i' j' = CNF.Clz2 (CNF.notlit $!! encode b i j k) (CNF.notlit $!! encode b i' j' k)
+    rule5 i j = CNF.ClzN $ map (\k -> CNF.lit $ encode b i j k) [1 .. size]
     fact (i, j) =
       case m ! encode_idx b (i, j) of
         Nothing -> Nothing
-        Just k -> Just [CNF.lit (encode b i j k)]
+        Just k -> Just $ CNF.Clz1 $ CNF.lit $ encode b i j k
 
     ijks = [(i, j, k) | i <- [0 .. size - 1], j <- [0 .. size - 1], k <- [1 .. size]]
 
@@ -252,7 +252,7 @@ from_cnf b@(size, m) cnf
 -- Solve Sudoku!
 solve :: Board -> IO (Maybe Board)
 solve b@(size, m) = do
-  sol <- CNF.solve False $!! to_cnf b
+  sol <- CNF.solve False $ to_cnf b
   case sol of
     Nothing -> return Nothing
     Just cnf -> return $ Just $ from_cnf b cnf

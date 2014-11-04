@@ -50,6 +50,9 @@ drop_last :: [a] -> [a]
 drop_last [_] = []
 drop_last (x:xs) = x:drop_last xs
 
+force :: a -> a
+force x = seq x x
+
 trace_it :: (Show a) => a -> a
 trace_it x = trace (show x) x
 
