@@ -40,23 +40,26 @@ lintify:
 	hlint src -i 'Use camelCase'  # Not using CamelCase and proud of it!
 	checkbashisms scripts/* *.sh
 
+ifneq (,$(PROFILE))
 profile:
-	GHCRTS='-s -p -h' scripts/test.sh 4 obj
+	GHCRTS='-s -p -h' scripts/test.sh obj 5
 	dos2unix *.prof *.hp
-	hp2ps -c *.hp
+	hp2ps -c GenRand.hp
+	hp2ps -c Solve.hp
+endif
 
 test t:
-	scripts/test.sh 4
+	scripts/test.sh 2 4
 
 test-obj t-obj:
-	scripts/test.sh 4 obj
+	scripts/test.sh obj 2 4
 
 depend:
 	ghc -M src/Board.hs -isrc -dep-suffix . -odir $(OBJDIR)
 	sed -ie '/DO NOT DELETE: Beginning of/,/DO NOT DELETE: End of/s!src/\([^ ]*\.hi\)!bin/\1!' Makefile
 
 clean:
-	rm -f $(OBJDIR)/* test.log *.prof *.hp *.aux *.ps
+	rm -f $(OBJDIR)/* test.log *.prof *.hp *.aux *.ps *.cnf
 
 $(OBJDIR)/GHC-FLAGS: FORCE
 	if test x"$(GHCFLAGS)" != x"$$(cat $@)"; then \

@@ -6,16 +6,22 @@ LOG=test.log
 
 rm -f $LOG
 
-if test -z "$1"; then
-  kk='3 4'
-else
-  kk="$(seq 3 $1)"
-fi
+me=$(basename $0)
 
-if test "$2" = obj; then
+if test "$1" = obj; then
   ext=.exe
+  shift
 else
   ext=.sh
+fi
+
+if [ $# -eq 1 ]; then
+  kk=$1
+elif [ $# -eq 2 ]; then
+  kk=$(seq $1 $2)
+else
+  echo >&2 "Syntax: $me [obj] [from] to"
+  exit 1
 fi
 
 # Avoid overflowing memory due to perf bugs
