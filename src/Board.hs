@@ -1,11 +1,15 @@
 module Board (Board, genrand, size, pretty_print, pretty_read, solve, to_cnf) where
 
+import qualified System.Random
+
 import qualified Data.List
 import qualified Data.Maybe
 import qualified Data.Array
 import Data.Array ((!),(//))
-import qualified System.Random
+
 import Debug.Trace (trace)
+import qualified Control.DeepSeq
+import Control.DeepSeq (($!!))
 
 import qualified Support
 import qualified CNF
@@ -253,7 +257,7 @@ from_cnf b@(size, m) cnf
 -- Solve Sudoku!
 solve :: Board -> IO (Maybe Board)
 solve b@(size, m) = do
-  sol <- CNF.solve False $ to_cnf b
+  sol <- CNF.solve False $!! to_cnf b
   case sol of
     Nothing -> return Nothing
     Just cnf -> return $ Just $ from_cnf b cnf

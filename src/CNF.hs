@@ -1,14 +1,18 @@
 module CNF (Literal (..), Clause, CNF.CNF, lit, notlit, CNF.or, print_dimacs, solve, is_negation) where
 
-import qualified Data.Time.Clock
-import qualified Data.List
-import qualified Support
 import qualified System.Process
 import qualified System.IO
 import qualified System.Exit
 import qualified System.Directory
 
+import qualified Data.Time.Clock
+import qualified Data.List
+
 import Debug.Trace (trace)
+import qualified Control.DeepSeq
+import Control.DeepSeq (($!!))
+
+import qualified Support
 
 minisat_path :: FilePath
 minisat_path = "minisat"
@@ -16,6 +20,10 @@ minisat_path = "minisat"
 data Literal = Yes Int | No Int deriving (Show, Read, Eq)
 type Clause = [Literal]
 type CNF = [Clause]
+
+instance Control.DeepSeq.NFData Literal where
+  rnf (Yes x) = Control.DeepSeq.deepseq x ()
+  rnf (No x) = Control.DeepSeq.deepseq x ()
 
 lit :: Int -> Literal
 lit = Yes
