@@ -74,8 +74,8 @@ run_minisat input_path output_path = do
     System.Exit.ExitFailure 20 -> return (False, out, err)
     _ -> Support.report_error ("minisat failed:\n" ++ out ++ err)
 
-solve :: CNF -> IO (Maybe [Literal])
-solve cnf = do
+solve :: Bool -> CNF -> IO (Maybe [Literal])
+solve keep_files cnf = do
   let dimacs = print_dimacs cnf
   (input_path, input_h) <- System.IO.openTempFile "." "board_in.cnf"
   System.IO.hPutStr input_h dimacs
@@ -89,8 +89,12 @@ solve cnf = do
   putStrLn ("MiniSAT wall time: " ++ show dt)
   file_out <- readFile output_path
 --  putStr file_out
-  System.Directory.removeFile input_path
-  --System.Directory.removeFile output_path  See https://ghc.haskell.org/trac/ghc/ticket/3231
+  if keep_files
+    then
+      return ()
+    else
+      System.Directory.removeFile input_path
+--      System.Directory.removeFile output_path  See https://ghc.haskell.org/trac/ghc/ticket/3231
   case read_minisat_out file_out of
     Left msg -> error msg
     Right sol -> return sol

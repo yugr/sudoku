@@ -253,7 +253,7 @@ from_cnf b@(size, m) cnf
 -- Solve Sudoku!
 solve :: Board -> IO (Maybe Board)
 solve b@(size, m) = do
-  sol <- CNF.solve $ to_cnf b
+  sol <- CNF.solve False $ to_cnf b
   case sol of
     Nothing -> return Nothing
     Just cnf -> return $ Just $ from_cnf b cnf
