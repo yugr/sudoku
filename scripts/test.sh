@@ -6,6 +6,8 @@ LOG=test.log
 
 rm -f $LOG
 
+export PATH=/cygdrive/c/cygwin64/home/Yura/src/minisat-2.2.0/core:$PATH
+
 me=$(basename $0)
 
 if test "$1" = obj; then

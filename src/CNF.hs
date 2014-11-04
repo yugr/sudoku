@@ -11,7 +11,7 @@ import qualified System.Directory
 import Debug.Trace (trace)
 
 minisat_path :: FilePath
-minisat_path = "C:\\cygwin64\\home\\Yura\\src\\minisat-2.2.0\\core\\minisat.exe"
+minisat_path = "minisat"
 
 data Literal = Yes Int | No Int deriving (Show, Read, Eq)
 type Clause = [Literal]
