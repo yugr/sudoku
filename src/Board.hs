@@ -224,7 +224,7 @@ to_cnf b@(size, m) =
     facts = Data.Maybe.mapMaybe fact $ index_pairs b
 
 -- Helper for solve
-get_single_yes :: Board -> [CNF.Literal] -> Int
+get_single_yes :: Board -> [CNF.Lit] -> Int
 get_single_yes b cnf
 --    | trace ("get_assign:\n  cnf = " ++ (show cnf) ++ "\n  pos = " ++ (show pos) ++ "\n  negs = " ++ (show negs) ++ "\n") False = undefined
     | length yes /= 1 = error "invalid input from solver: number of positive variables for cell /= 1"

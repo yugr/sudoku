@@ -1,4 +1,4 @@
-module CNF (Literal (..), Clause, CNF.CNF, lit, notlit, CNF.or, print_dimacs, solve, is_negation) where
+module CNF (Lit (..), Clause, CNF.CNF, lit, notlit, CNF.or, print_dimacs, solve, is_negation) where
 
 import qualified System.Process
 import qualified System.IO
@@ -17,24 +17,24 @@ import qualified Support
 minisat_path :: FilePath
 minisat_path = "minisat"
 
-data Literal = Yes Int | No Int deriving (Show, Read, Eq)
-type Clause = [Literal]
+data Lit = Yes Int | No Int deriving (Show, Read, Eq)
+type Clause = [Lit]
 type CNF = [Clause]
 
-instance Control.DeepSeq.NFData Literal where
+instance Control.DeepSeq.NFData Lit where
   rnf (Yes x) = Control.DeepSeq.deepseq x ()
   rnf (No x) = Control.DeepSeq.deepseq x ()
 
-lit :: Int -> Literal
+lit :: Int -> Lit
 lit = Yes
 
-notlit :: Int -> Literal
+notlit :: Int -> Lit
 notlit = No
 
-or :: [Literal] -> Clause
+or :: [Lit] -> Clause
 or = id
 
-is_negation :: Literal -> Bool
+is_negation :: Lit -> Bool
 is_negation (No _) = True
 is_negation (Yes _) = False
 
@@ -67,7 +67,7 @@ parse_minisat_status ("SAT":rest) = parse_minisat_assigns rest
 parse_minisat_status ("UNSAT":_) = Right Nothing
 parse_minisat_status _ = Left "error in .cnf file: unexpected status line"
 
-read_minisat_out :: String -> Either String (Maybe [Literal])
+read_minisat_out :: String -> Either String (Maybe [Lit])
 read_minisat_out s = parse_minisat_status $ lines s
 --read_dimacs s = let x = parse_dimacs_status $ lines s in trace (show x) $ x
 
@@ -82,7 +82,7 @@ run_minisat input_path output_path = do
     System.Exit.ExitFailure 20 -> return (False, out, err)
     _ -> Support.report_error ("minisat failed:\n" ++ out ++ err)
 
-solve :: Bool -> CNF -> IO (Maybe [Literal])
+solve :: Bool -> CNF -> IO (Maybe [Lit])
 solve keep_files cnf = do
   let dimacs = print_dimacs cnf
   (input_path, input_h) <- System.IO.openTempFile "." "board_in.cnf"
