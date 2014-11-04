@@ -8,6 +8,7 @@ GHCFLAGS = -fforce-recomp -O2 -rtsopts
 
 # Gimme some dirt...
 GHCFLAGS += -keep-s-files
+GHCFLAGS += -ddump-simpl -dsuppress-all -ddump-to-file
 
 LDFLAGS = -package random -package directory -package process
 
@@ -32,9 +33,29 @@ $(OBJDIR)/%.exe: $(OBJDIR)/%.o $(OBJS) $(OBJDIR)/GHC-FLAGS
 $(OBJDIR)/%.o: $(MODDIR)/%.hs $(OBJDIR)/GHC-FLAGS
 	ghc -c $(GHCFLAGS) -i$(OBJDIR) $< -o $@ -ohi $(@:o=hi)
 	mv $(<:hs=s) $(OBJDIR)
+	mv $(<:hs=dump-simpl) $(OBJDIR)
 
 $(OBJDIR)/%.hi: $(OBJDIR)/%.o $(OBJDIR)/GHC-FLAGS
 	# Was already moved during compilation of .o
+
+help:
+	@echo "Common targets:"
+	@echo "  all        Build all executables and scripts"
+	@echo "  clean      Clean all build files and temps."
+	@echo "  depend     Rebuild dependencies (modifies Makefile!)."
+	@echo "  help       Print help on build options."
+	@echo ""
+	@echo "Less common:"
+	@echo "  profile    Run profile tests (requires PROFILE to be set)."
+	@echo "  interp     Create scripts."
+	@echo "  obj        Build executables."
+	@echo "  test       "
+	@echo "  t          Regtest scripts."
+	@echo "  test-obj   "
+	@echo "  to         Regtest executables."
+	@echo ""
+	@echo "Build options:"
+	@echo "  PROFILE=1  Build with profile counters."
 
 lintify:
 	hlint src -i 'Use camelCase'  # Not using CamelCase and proud of it!
@@ -42,7 +63,7 @@ lintify:
 
 ifneq (,$(PROFILE))
 profile:
-	GHCRTS='-s -p -h' scripts/test.sh obj 5
+	GHCRTS='-s -p -h' scripts/test.sh obj 4
 	dos2unix *.prof *.hp
 	hp2ps -c GenRand.hp
 	hp2ps -c Solve.hp
@@ -51,7 +72,7 @@ endif
 test t:
 	scripts/test.sh 2 4
 
-test-obj t-obj:
+test-obj to:
 	scripts/test.sh obj 2 4
 
 depend:
@@ -66,7 +87,7 @@ $(OBJDIR)/GHC-FLAGS: FORCE
 		echo "$(GHCFLAGS)" > $@; \
 	fi
 
-.PHONY: clean test t lintify all obj interp FORCE profile
+.PHONY: clean test t test-obj to lintify all obj interp FORCE profile help
 
 # DO NOT DELETE: Beginning of Haskell dependencies
 bin/Support.o : src/Support.hs
