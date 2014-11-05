@@ -77,9 +77,14 @@ test t:
 test-obj to:
 	scripts/test.sh obj 2 4
 
+# Crude workaround around GHC sillyness wrt Main modules
+$(OBJDIR)/Solve.o: $(OBJDIR)/Support.o $(OBJDIR)/CNF.o $(OBJDIR)/Board.o
+$(OBJDIR)/GenRand.o: $(OBJDIR)/Support.o $(OBJDIR)/CNF.o $(OBJDIR)/Board.o
+$(OBJDIR)/Encode.o: $(OBJDIR)/Support.o $(OBJDIR)/CNF.o $(OBJDIR)/Board.o
+
 depend:
-	ghc -M src/Board.hs -isrc -dep-suffix . -odir $(OBJDIR)
-	sed -ie '/DO NOT DELETE: Beginning of/,/DO NOT DELETE: End of/s!src/\([^ ]*\.hi\)!bin/\1!' Makefile
+	ghc -M src/Support.hs src/Board.hs src/CNF.hs -isrc -dep-suffix . -odir $(OBJDIR)
+	sed -i -e '/[D]O NOT DELETE: Beginning/,/[D]O NOT DELETE: End/s!src/\([^ ]*\.hi\)!bin/\1!' Makefile
 
 clean:
 	rm -f $(OBJDIR)/* test.log *.prof *.hp *.aux *.ps *.cnf
