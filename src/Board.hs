@@ -177,50 +177,44 @@ pretty_read s =
 -}
 
 nvars (size, _) = size * size * size
-ijk2var (size, _) i j k = i * size * size + j * size + k
-var2ijk (size, _) idx = let idx1 = idx - 1 in (idx1 `mod` size * size, idx1 `mod` size, rem idx1 size + 1)
+encode (size, _) i j k = i * size * size + j * size + k
+decode (size, _) idx = let idx1 = idx - 1 in (idx1 `mod` size * size, idx1 `mod` size, rem idx1 size + 1)
 
 to_cnf :: Board -> CNF.CNF
-to_cnf b@(size, m) =
-    rules1 ++ rules2 ++ rules3 ++ rules4 ++ rules5 ++ facts
+to_cnf b@(size, m) = rules
   where
-    rule1 i j k k' = [CNF.notlit (ijk2var b i j k), CNF.notlit (ijk2var b i j k')]
+    rules = rules1 ++ rules2 ++ rules3 ++ rules4 ++ rules5 ++ facts
+
+    ijks = [(i, j, k) | i <- [0 .. size - 1],
+                        j <- [0 .. size - 1],
+                        k <- [1 .. size]]
+
+    rule1 i j k k' = [CNF.notlit (encode b i j k), CNF.notlit (encode b i j k')]
     rules1 =
-      [rule1 i j k k' | i <- [0 .. size - 1],
-                        j <- [0 .. size - 1],
-                        k <- [1 .. size],
-                        k' <- [1 .. size],
-                        k' /= k]
-    rule2 i j k j' = [CNF.notlit (ijk2var b i j k), CNF.notlit (ijk2var b i j' k)]
+      [rule1 i j k k' | (i, j, k) <- ijks, k' <- [1 .. k - 1]]
+
+    rule2 i j k j' = [CNF.notlit (encode b i j k), CNF.notlit (encode b i j' k)]
     rules2 =
-      [rule2 i j k j' | i <- [0 .. size - 1],
-                        j <- [0 .. size - 1],
-                        k <- [1 .. size],
-                        j' <- [0 .. size - 1],
-                        j' /= j]
-    rule3 i j k i' = [CNF.notlit (ijk2var b i j k), CNF.notlit (ijk2var b i' j k)]
+      [rule2 i j k j' | (i, j, k) <- ijks, j' <- [0 .. j - 1]]
+
+    rule3 i j k i' = [CNF.notlit (encode b i j k), CNF.notlit (encode b i' j k)]
     rules3 =
-      [rule3 i j k i' | i <- [0 .. size - 1],
-                        j <- [0 .. size - 1],
-                        k <- [1 .. size],
-                        i' <- [0 .. size - 1],
-                        i' /= i]
-    rule4 i j k i' j' = [CNF.notlit (ijk2var b i j k), CNF.notlit (ijk2var b i' j' k)]
+      [rule3 i j k i' | (i, j, k) <- ijks, i' <- [0 .. i - 1]]
+
+    rule4 i j k i' j' = [CNF.notlit (encode b i j k), CNF.notlit (encode b i' j' k)]
     rules4 =
-      [rule4 i j k i' j' | i <- [0 .. size - 1],
-                           j <- [0 .. size - 1],
+      [rule4 i j k i' j' | (i, j, k) <- ijks,
                            let (bi, bj) = ij2block b i j,
-                           k <- [1 .. size],
                            (i', j') <- block_ijs b bi bj,
                            (i' /= i) || (j' /= j)]
-    rule5 i j = map (\k -> CNF.lit $ ijk2var b i j k) [1 .. size]
+
+    rule5 i j = map (\k -> CNF.lit $ encode b i j k) [1 .. size]
     rules5 = [rule5 i j | i <- [0 .. size - 1], j <- [0 .. size - 1]]
-    fact :: (Int, Int) -> Maybe CNF.Clause
+
     fact (i, j) =
       case m ! encode_idx b (i, j) of
         Nothing -> Nothing
-        Just k -> Just [CNF.lit (ijk2var b i j k)]
-    facts :: CNF.CNF
+        Just k -> Just [CNF.lit (encode b i j k)]
     facts = Data.Maybe.mapMaybe fact $ index_pairs b
 
 -- Helper for solve
@@ -232,7 +226,7 @@ get_single_yes b cnf
   where
     (_, yes) = Data.List.partition CNF.is_negation cnf
     CNF.Yes var = head yes
-    (_, _, k) = var2ijk b var
+    (_, _, k) = decode b var
 
 conflict :: Board -> Board -> Bool
 conflict (size1, m1) (size2, m2)
