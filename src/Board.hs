@@ -204,9 +204,11 @@ to_cnf b@(size, m) = rules
     rule4 i j k i' j' = [CNF.notlit (encode b i j k), CNF.notlit (encode b i' j' k)]
     rules4 =
       [rule4 i j k i' j' | (i, j, k) <- ijks,
+                           let idx = encode_idx b (i, j),
                            let (bi, bj) = ij2block b i j,
                            (i', j') <- block_ijs b bi bj,
-                           (i' /= i) || (j' /= j)]
+                           let idx' = encode_idx b (i', j'),
+                           idx' > idx]
 
     rule5 i j = map (\k -> CNF.lit $ encode b i j k) [1 .. size]
     rules5 = [rule5 i j | i <- [0 .. size - 1], j <- [0 .. size - 1]]
