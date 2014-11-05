@@ -65,7 +65,7 @@ lintify:
 
 ifneq (0,$(PROFILE))
 profile:
-	GHCRTS='-s -h -i0.01' scripts/test.sh obj 4
+	GHCRTS='-s -h -i0.001' scripts/test.sh obj 4
 	dos2unix *.hp
 	hp2ps -c GenRand.hp
 	hp2ps -c Solve.hp
