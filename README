@@ -1,27 +1,34 @@
 = Overview =
 
 This is a simple Sudoku solver that I've started to experiment with SAT/SMT solvers.
+It currently only runs for boards up to 36x36 (k = 6).
 
-= Plan =
+= Build =
 
-* run for inputs up to 100x100 (k=10); ideas:
-** use strict fields aggressively
-** generate all rules for each cell in one function
-** profile more
+Install Haskell Platform and do
+  $ make clean all
+  $ make test-obj
+
+= Plans =
+
 * plot timing graphs (time vs. #constraints, #constraints vs. #vars)
+* see how rule order influences MiniSAT timing
+* find all solutions (plot graph number-of-sols vs. percentage)
+* experiment with different encodings:
+** Sudoku as a SAT Problem (http://anytime.cs.umass.edu/aimath06/proceedings/P34.pdf)
+** A SAT-based Sudoku Solver (https://www.lri.fr/~conchon/mpri/weber.pdf)
+** Optimized CNF Encoding for Sudoku Puzzles (http://www.cs.cmu.edu/~hjain/papers/sudoku-as-SAT.pdf)
+* see how Haskell people do interfaces to MiniSAT or other external solvers (and how they cope with big CNFs)
 * experiment with SMT solvers
 
 = TODO =
 
-* find all solutions
-* put temp files in separate folder
-* FIXME
-* Haddocks
-* better deps tracking (?)
-
-= Read =
-
-* using GHC
-* what's the proper way to do error handling? what about nested ifs and cases ?
-* same for assertions? how about (ab)using guards?
+* handle FIXME
+* store temp files in separate folder
+* write Haddocks
+* run for inputs up to 100x100 (k=10); ideas:
+** understand where is all the memory going to
+** use strict fields aggressively
+** generate all rules for each cell in one function
+** use streams
 
