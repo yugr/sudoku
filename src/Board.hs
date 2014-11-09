@@ -195,16 +195,13 @@ to_cnf b@(size, m) = rules
 
     ijks = [(i, j, k) | i <- [0 .. size - 1], j <- [0 .. size - 1], k <- [1 .. size]]
 
-    rules = rules1 ++ rules2 ++ rules3 ++ rules4 ++ rules5 ++ facts
+    rules = rules1 ++ rules2_and_3 ++ rules4 ++ rules5 ++ facts
 
     rules1 =
       [rule1 i j k k' | (i, j, k) <- ijks, k' <- [1 .. k - 1]]
 
-    rules2 =
-      [rule2 i j k j' | (i, j, k) <- ijks, j' <- [0 .. j - 1]]
-
-    rules3 =
-      [rule3 i j k i' | (i, j, k) <- ijks, i' <- [0 .. i - 1]]
+    rules2_and_3 =
+      [r | (i, j, k) <- ijks, i' <- [0 .. i - 1], r <- [rule2 j i k i', rule3 i j k i']]
 
     rules4 =
       [rule4 i j k i' j' | (i, j, k) <- ijks,
