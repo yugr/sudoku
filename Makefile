@@ -10,7 +10,7 @@ GHCFLAGS = -fforce-recomp -O2 -rtsopts -funbox-strict-fields
 
 # Gimme some dirt...
 GHCFLAGS += -keep-s-files
-GHCFLAGS += -ddump-simpl -dsuppress-all -ddump-to-file
+GHCFLAGS += -ddump-simpl -fext-core -dsuppress-all -ddump-to-file
 
 LDFLAGS = -package random -package directory -package process
 
@@ -34,8 +34,7 @@ $(OBJDIR)/%.exe: $(OBJDIR)/%.o $(OBJS) $(OBJDIR)/GHC-FLAGS
 
 $(OBJDIR)/%.o: $(MODDIR)/%.hs $(OBJDIR)/GHC-FLAGS
 	ghc -c $(GHCFLAGS) -i$(OBJDIR) $< -o $@ -ohi $(@:o=hi)
-	mv $(<:hs=s) $(OBJDIR)
-	mv $(<:hs=dump-simpl) $(OBJDIR)
+	mv $(<:hs=s) $(<:hs=dump-simpl) $(<:hs=hcr) $(OBJDIR)
 
 $(OBJDIR)/%.hi: $(OBJDIR)/%.o $(OBJDIR)/GHC-FLAGS
 	# Was already moved during compilation of .o
