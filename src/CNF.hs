@@ -104,6 +104,8 @@ solve keep_files cnf = do
   (status, out, err) <- run_minisat input_path output_path
   tac <- Data.Time.Clock.getCurrentTime
   let dt = Data.Time.Clock.diffUTCTime tac tic
+  putStrLn ("#variables: " ++ show (nvars cnf))
+  putStrLn ("#equations: " ++ show (neqs cnf))
   putStrLn ("MiniSAT wall time: " ++ show dt)
   file_out <- readFile output_path
 --  putStr file_out
