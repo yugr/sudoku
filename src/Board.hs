@@ -183,8 +183,6 @@ decode (size, _) idx = let idx1 = idx - 1 in (idx1 `mod` size * size, idx1 `mod`
 to_cnf :: Board -> CNF.CNF
 to_cnf b@(size, m) = rules
   where
-    rules = rules1 ++ rules2 ++ rules3 ++ rules4 ++ rules5 ++ facts
-
     rule1 i j k k' = [CNF.notlit (encode b i j k), CNF.notlit (encode b i j k')]
     rule2 i j k j' = [CNF.notlit (encode b i j k), CNF.notlit (encode b i j' k)]
     rule3 i j k i' = [CNF.notlit (encode b i j k), CNF.notlit (encode b i' j k)]
@@ -195,9 +193,9 @@ to_cnf b@(size, m) = rules
         Nothing -> Nothing
         Just k -> Just [CNF.lit (encode b i j k)]
 
-    ijks = [(i, j, k) | i <- [0 .. size - 1],
-                        j <- [0 .. size - 1],
-                        k <- [1 .. size]]
+    ijks = [(i, j, k) | i <- [0 .. size - 1], j <- [0 .. size - 1], k <- [1 .. size]]
+
+    rules = rules1 ++ rules2 ++ rules3 ++ rules4 ++ rules5 ++ facts
 
     rules1 =
       [rule1 i j k k' | (i, j, k) <- ijks, k' <- [1 .. k - 1]]
