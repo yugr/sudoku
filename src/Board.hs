@@ -185,23 +185,29 @@ to_cnf b@(size, m) = rules
   where
     rules = rules1 ++ rules2 ++ rules3 ++ rules4 ++ rules5 ++ facts
 
+    rule1 i j k k' = [CNF.notlit (encode b i j k), CNF.notlit (encode b i j k')]
+    rule2 i j k j' = [CNF.notlit (encode b i j k), CNF.notlit (encode b i j' k)]
+    rule3 i j k i' = [CNF.notlit (encode b i j k), CNF.notlit (encode b i' j k)]
+    rule4 i j k i' j' = [CNF.notlit (encode b i j k), CNF.notlit (encode b i' j' k)]
+    rule5 i j = map (\k -> CNF.lit $ encode b i j k) [1 .. size]
+    fact (i, j) =
+      case m ! encode_idx b (i, j) of
+        Nothing -> Nothing
+        Just k -> Just [CNF.lit (encode b i j k)]
+
     ijks = [(i, j, k) | i <- [0 .. size - 1],
                         j <- [0 .. size - 1],
                         k <- [1 .. size]]
 
-    rule1 i j k k' = [CNF.notlit (encode b i j k), CNF.notlit (encode b i j k')]
     rules1 =
       [rule1 i j k k' | (i, j, k) <- ijks, k' <- [1 .. k - 1]]
 
-    rule2 i j k j' = [CNF.notlit (encode b i j k), CNF.notlit (encode b i j' k)]
     rules2 =
       [rule2 i j k j' | (i, j, k) <- ijks, j' <- [0 .. j - 1]]
 
-    rule3 i j k i' = [CNF.notlit (encode b i j k), CNF.notlit (encode b i' j k)]
     rules3 =
       [rule3 i j k i' | (i, j, k) <- ijks, i' <- [0 .. i - 1]]
 
-    rule4 i j k i' j' = [CNF.notlit (encode b i j k), CNF.notlit (encode b i' j' k)]
     rules4 =
       [rule4 i j k i' j' | (i, j, k) <- ijks,
                            let idx = encode_idx b (i, j),
@@ -210,13 +216,8 @@ to_cnf b@(size, m) = rules
                            let idx' = encode_idx b (i', j'),
                            idx' > idx]
 
-    rule5 i j = map (\k -> CNF.lit $ encode b i j k) [1 .. size]
     rules5 = [rule5 i j | i <- [0 .. size - 1], j <- [0 .. size - 1]]
 
-    fact (i, j) =
-      case m ! encode_idx b (i, j) of
-        Nothing -> Nothing
-        Just k -> Just [CNF.lit (encode b i j k)]
     facts = Data.Maybe.mapMaybe fact $ index_pairs b
 
 -- Helper for solve
