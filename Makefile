@@ -59,13 +59,16 @@ lintify:
 	hlint src -i 'Use camelCase'  # Not using CamelCase and proud of it!
 	checkbashisms scripts/* *.sh
 
-ifneq (0,$(PROFILE))
 profile:
+	# Sanity check
+	if grep -qv -- -prof $(OBJDIR)/GHC-FLAGS; then \
+	  echo >&2 'Can''t collect profile on a non-profile build'; \
+	  false; \
+	fi
 	GHCRTS='-s -h -i0.001' scripts/test.sh obj 4 2>&1 | tee profile.log
 	dos2unix *.hp
 	hp2ps -c GenRand.hp
 	hp2ps -c Solve.hp
-endif
 
 check:
 	scripts/test.sh 2 4
