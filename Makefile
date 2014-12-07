@@ -50,10 +50,7 @@ help:
 	@echo "  profile    Run profile tests (requires PROFILE to be set)."
 	@echo "  interp     Create scripts."
 	@echo "  obj        Build executables."
-	@echo "  test       "
-	@echo "  t          Regtest scripts."
-	@echo "  test-obj   "
-	@echo "  to         Regtest executables."
+	@echo "  check      Run regtests."
 	@echo ""
 	@echo "Build options:"
 	@echo "  PROFILE=1  Build with profile counters."
@@ -64,16 +61,14 @@ lintify:
 
 ifneq (0,$(PROFILE))
 profile:
-	GHCRTS='-s -h -i0.001' scripts/test.sh obj 4
+	GHCRTS='-s -h -i0.001' scripts/test.sh obj 5
 	dos2unix *.hp
 	hp2ps -c GenRand.hp
 	hp2ps -c Solve.hp
 endif
 
-test t:
+check:
 	scripts/test.sh 2 4
-
-test-obj to:
 	scripts/test.sh obj 2 4
 
 # Crude workaround around GHC sillyness wrt Main modules
@@ -93,7 +88,7 @@ $(OBJDIR)/GHC-FLAGS: FORCE
 		echo "$(GHCFLAGS)" > $@; \
 	fi
 
-.PHONY: clean test t test-obj to lintify all obj interp FORCE profile help
+.PHONY: clean check lintify all obj interp FORCE profile help
 
 # DO NOT DELETE: Beginning of Haskell dependencies
 bin/Support.o : src/Support.hs
