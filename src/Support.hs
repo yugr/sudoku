@@ -18,12 +18,11 @@ arsert True x = x
 deintersperse :: (Eq a) => a -> [a] -> [[a]]
 deintersperse x xs =
   let
-    deintersperse' [] acc = [acc]
+    deintersperse' [] acc = [reverse acc]
     deintersperse' (y:ys) acc =
       if x == y
-        then acc : deintersperse' ys []
-        -- FIXME: slow
-        else deintersperse' ys (acc ++ [y])
+        then reverse acc : deintersperse' ys []
+        else deintersperse' ys (y:acc)
   in
     deintersperse' xs []
 
