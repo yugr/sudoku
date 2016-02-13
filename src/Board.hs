@@ -1,3 +1,8 @@
+-- Copyright 2015-2016 Yury Gribov
+-- 
+-- Use of this source code is governed by MIT license that can be
+-- found in the LICENSE.txt file.
+
 module Board (Board, genrand, size, pretty_print, pretty_read, solve, to_cnf) where
 
 import qualified System.Random

@@ -1,3 +1,8 @@
+-- Copyright 2015-2016 Yury Gribov
+-- 
+-- Use of this source code is governed by MIT license that can be
+-- found in the LICENSE.txt file.
+
 module CNF (Lit (..), Clause (..), CNF.CNF, lit, notlit, get_var, neqs, nvars, print_dimacs, solve, is_negation) where
 
 import qualified System.Process

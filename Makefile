@@ -1,3 +1,8 @@
+# Copyright 2015-2016 Yury Gribov
+# 
+# Use of this source code is governed by MIT license that can be
+# found in the LICENSE.txt file.
+
 MODDIR = src
 OBJDIR = bin
 
